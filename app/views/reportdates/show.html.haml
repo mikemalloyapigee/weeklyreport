@@ -1,0 +1,29 @@
+%p#notice
+  = notice
+%p
+  %strong
+    Start date:
+  = @reportdate.start_date
+%p
+  %strong
+    End date:
+  = @reportdate.end_date
+%p
+  %strong
+    Total Questions:
+  = @reportdate.questions
+%p
+  %strong
+    Total Answers:
+  = @reportdate.num_answers
+%p
+  %strong
+    Double Check Answers: 
+  =@double_check_answers
+%p
+  %strong
+    Total Views:
+  = @reportdate.views
+%br
+= link_to 'Edit', edit_reportdate_path(@reportdate) |
+= link_to 'Back', reportdates_path

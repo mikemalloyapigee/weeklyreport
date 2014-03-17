@@ -1,0 +1,49 @@
+<%= form_for(@overall) do |f| %>
+  <% if @overall.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@overall.errors.count, "error") %> prohibited this overall from being saved:</h2>
+
+      <ul>
+      <% @overall.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :date %><br>
+    <%= f.text_field :date %>
+  </div>
+  <div class="field">
+    <%= f.label :desk %><br>
+    <%= f.number_field :desk %>
+  </div>
+  <div class="field">
+    <%= f.label :getsat %><br>
+    <%= f.number_field :getsat %>
+  </div>
+  <div class="field">
+    <%= f.label :usergrid %><br>
+    <%= f.number_field :usergrid %>
+  </div>
+  <div class="field">
+    <%= f.label :feedback %><br>
+    <%= f.number_field :feedback %>
+  </div>
+  <div class="field">
+    <%= f.label :appcraft %><br>
+    <%= f.number_field :appcraft %>
+  </div>
+  <div class="field">
+    <%= f.label :stackoverflow %><br>
+    <%= f.number_field :stackoverflow %>
+  </div>
+  <div class="field">
+    <%= f.label :help %><br>
+    <%= f.number_field :help %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

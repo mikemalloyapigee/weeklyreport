@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @respondent.name %>
+</p>
+
+<p>
+  <strong>Display name:</strong>
+  <%= @respondent.display_name %>
+</p>
+
+<p>
+  <strong>Employee:</strong>
+  <%= @respondent.employee %>
+</p>
+
+<p>
+  <strong>Full name:</strong>
+  <%= @respondent.full_name %>
+</p>
+
+<p>
+  <strong>Department:</strong>
+  <%= @respondent.department %>
+</p>
+
+<%= link_to 'Edit', edit_respondent_path(@respondent) %> |
+<%= link_to 'Back', respondents_path %>

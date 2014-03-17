@@ -1,0 +1,21 @@
+%h1 Respondents
+
+%table.table.table-condensed.table-striped.table-bordered
+  %thead
+    %tr
+      %th Display name
+      %th Employee
+      %th Full name
+      %th Department
+      %th
+  %tbody
+    - @respondents.each do |respondent|
+      %tr
+        %td= respondent.display_name 
+        %td= respondent.employee 
+        %td= respondent.full_name 
+        %td= respondent.department 
+        %td= link_to 'Edit', edit_respondent_path(respondent) 
+%br
+
+= link_to 'New Respondent', new_respondent_path

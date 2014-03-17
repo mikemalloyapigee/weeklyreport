@@ -1,0 +1,25 @@
+%h1 Listing Reports
+%table.table-bordered.table-condensed.table-striped
+  %thead
+    %tr
+      %th Start date
+      %th End date
+      %th Questions
+      %th Answers
+      %th Views
+      %th
+      %th 
+      %th 
+  %tbody
+    - @reportdates.each do |reportdate| 
+      %tr
+        %td=  reportdate.start_date 
+        %td=  reportdate.end_date 
+        %td=  reportdate.questions
+        %td=  reportdate.num_answers
+        %td=  reportdate.views
+        %td=  link_to 'Show', reportdate 
+        %td=  link_to 'Edit', edit_reportdate_path(reportdate) 
+        %td=  link_to 'Destroy', reportdate, method: :delete, data: { confirm: 'Are you sure?' } 
+%br
+= link_to 'New Report', new_reportdate_path 

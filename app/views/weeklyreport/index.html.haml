@@ -1,0 +1,195 @@
+:javascript
+  $(function(){
+    new Morris.Line({
+      element: 'views_chart',
+      data: $('#views_chart').data('reports'),
+      xkey: 'end_date',
+      ykeys: ['views'],
+      labels: ['Views']
+    });
+    new Morris.Line({
+      element: 'questions_and_answers_chart',
+      data: $('#questions_and_answers_chart').data('reports'),
+      xkey: 'end_date',
+      ykeys: ['questions','num_answers'],
+      labels: ['Questions',"Answers"]
+    });
+  });
+.container.span8
+  %h2.text-center Developer Support Summary
+  - if @start_date == nil or @end_date == nil
+    = form_tag(controller: :weeklyreport, action: :index) do
+      = field_set_tag do
+        .control-group
+          =label_tag "Start Date"
+          =text_field_tag :sdate 
+        .control-group
+          =label_tag "End Date"
+          =text_field_tag :edate 
+        .control-group
+          =submit_tag "Enter Dates"
+        
+  -if @start_date != nil and @end_date != nil
+    %h4.text-center="Report date from #{@start_date_str} to #{@end_date_str}"
+  %br
+  %h4.text-center Overall Traffic Summary
+  %table.table.table-condensed.table-striped
+    %thead
+      %tr
+        %th
+        - @overalls.each do |summary_data|
+          %th.text-center= @short_months[summary_data.date.month] + " " + summary_data.date.year.to_s
+    %tbody
+      %tr
+        %td Overall-Desk.com
+        - @overalls.each do |summary_data|
+          %td.text-center= summary_data.desk
+      %tr
+        %td GetSatisfaction
+        - @overalls.each do |summary_data|
+          %td.text-center= summary_data.getsat
+      %tr
+        %td UserGrid Google Group
+        - @overalls.each do |summary_data|
+          %td.text-center= summary_data.usergrid
+      %tr
+        %td Feedback@apigee.com
+        - @overalls.each do |summary_data|
+          %td.text-center= summary_data.feedback
+      %tr
+        %td App-Craft Google Group
+        - @overalls.each do |summary_data|
+          %td.text-center= summary_data.appcraft
+      %tr
+        %td Help@apigee.com
+        - @overalls.each do |summary_data|
+          %td.text-center= summary_data.help
+      %tr
+        %td StackOverflow
+        - @overalls.each do |summary_data|
+          %td.text-center= summary_data.stackoverflow
+  %p Overall traffic from Desk.com has gone down primarily because tweet monitoring was turned off for a number of inputs.  The actual number of items to respond to has remained constant.
+  %p Traffic to Stackoverflow.com remains below levels seen with GetSatisfaction!  This is likely due to the heightened question criteria for Stackoverflow.  Questions are now moderated and those without enough detail or are off-topic are flagged as such and removed.  Questions regarding things like not being able to login or 500 errors with a proxy are now generally going to help@apigee.com.
+  %p 
+    All statistics for Stackoverflow.com come from their 
+    =link_to "API", "https://api.stackexchange.com/"
+    \.
+  %br
+  - if !@start_date.nil? and !@end_date.nil?
+    %h2.text-center Stack Overflow Data
+    %h4.text-center Summary of Last Week
+    %table.table.table-condensed.table-bordered
+      %thead
+        %tr.active
+          %th 
+          %th.text-center= @end_date_str
+          %th.text-center WOW % Difference
+      %tbody
+        %tr
+          %td.text-center Total Questions
+          %td.text-center= @last_weeks_results.questions
+          %td.text-center=@percent_differences[:questions]
+        %tr
+          %td.text-center Total Answers
+          %td.text-center= @last_weeks_results.num_answers
+          %td.text-center=@percent_differences[:answers]
+        %tr
+          %td.text-center Views
+          %td.text-center= @last_weeks_results.views
+          %td.text-center=@percent_differences[:views]
+    %br
+    %h4.text-center All Time Top Viewed Questions
+    %table.table.table-condensed.table-bordered
+      %thead
+        %tr.active
+          %th Title
+          %th Views
+          %th Answers
+          %th Link
+      %tbody
+      - @top_questions[:top_views].each do |question|
+        %tr
+          %td= question["title"]
+          %td.text-center= question["view_count"]
+          %td.text-center= question["answer_count"]
+          %td.text-center= link_to "View", question["link"]
+    %br
+    %h4.text-center All Time Top Answered Questions
+    %table.table.table-condensed.table-bordered
+      %thead
+        %tr.active
+          %th Title
+          %th Views
+          %th Answers
+          %th Link
+      %tbody
+      - @top_questions[:top_answers].each do |question|
+        %tr
+          %td= question["title"]
+          %td.text-center= question["view_count"]
+          %td.text-center= question["answer_count"]
+          %td.text-center= link_to "View", question["link"]
+    %br
+    - if @top_responders.length > 0
+      %h4.text-center Top Responders
+      %p We would like to thank and acknowledge the following people for being top responders in the past week
+      %table.table.table-condensed.table-bordered
+        %thead
+          %tr.active
+            %th Name
+            %th.text-center Responses
+        %tbody
+        - @top_responders.each do |resp|
+          %tr
+            %td= resp[:respondent].full_name
+            %td.text-center= resp[:responses][0]
+      %br
+    %h4.text-center Employee Responses
+    %p Employee participation is critical to Developer success.  Support has come from many areas in the company.  All responses are greatly appreciated.
+    %table.table.table-condensed.table-bordered
+      %thead
+        %tr.active
+          %th Name
+          - @respondent_tables[:report_ids].each do |rep_id|
+            - report_date = Reportdate.find(rep_id).end_date
+            %th.text-center= @short_months[report_date.month] + " " + report_date.day.to_s 
+      %tbody
+        - curr_department = ""
+        - @respondent_tables[:employees].each do |employee|
+          - department = employee[:respondent].department
+          - if department != curr_department
+            - curr_department = department
+            %tr
+              %td.text-center.active{:colspan => 7}= curr_department + " Team"
+          %tr
+            %td= employee[:respondent].full_name
+            - employee[:responses].each do |response|
+              %td.text-center= response
+    %br
+    %h4.text-center Non-Employee Responses
+    %p Apigee continues to have robust community support on Stackoverflow.com
+    %table.table.table-condensed.table-bordered
+      %thead
+        %tr.active
+          %th Display Name
+          - @respondent_tables[:report_ids].each do |rep_id|
+            - report_date = Reportdate.find(rep_id).end_date
+            %th.text-center= @short_months[report_date.month] + " " + report_date.day.to_s 
+      %tbody
+        - @respondent_tables[:non_employees].each do |non_employee|
+          %tr
+            %td= non_employee[:respondent].display_name
+            - non_employee[:responses].each do |response|
+              %td.text-center= response
+    %p If there is anyone on the non-employee list that is an employee, please send me an email with the full name to use and department
+    %br
+    %footer
+      %p.lead &copy; Apigee Corporation Confidential 2014
+    /%br
+    /%h4.text-center Historical Trend of Views
+    /#views_chart{ data: { reports: @all_reports.to_json } }
+    /%br
+    /%h4.text-center Historical Trend of Questions and Answers
+    /#questions_and_answers_chart{ data: { reports: @all_reports.to_json } }
+          
+  
